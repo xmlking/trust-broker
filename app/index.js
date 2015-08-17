@@ -26,7 +26,7 @@ export default class OauthServer {
     this.server = koa();
     this.server.use(ErrorHandler.catchAll);
     this.server.use(bodyParser());
-    this.server.use(new AuthController(privateKey));
+    this.server.use(new AuthController(privateKey, ALGORITHM));
 
     // Everything behind this will be protected.
     this.server.use(jwt({ secret: publicKey, algorithm: ALGORITHM}));

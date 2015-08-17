@@ -6,16 +6,16 @@ export default class AuthController {
 
   router:Router;
 
-  constructor(privateKey) {
+  constructor(privateKey, algorithm) {
     this.router = new Router({
       prefix: '/auth'
     });
 
     this.router
       .post('/login', AuthController.findUser, function *(next) {
-        var token = jwt.sign(this.user, privateKey, {algorithm: 'RS256'});
+        let token = jwt.sign(this.user, privateKey, {algorithm});
         this.status = 200;
-        this.body = {token: token};
+        this.body = {token};
       })
       .get('/logout', AuthController.logout)
       .get('/:id', AuthController.findById, AuthController.user);
@@ -45,11 +45,9 @@ export default class AuthController {
   }
 
   static *login(next) {
-    this.user = [
-      { username: 'dgrove'
-        , jwt: 'dkaflkjakldjfd;lkajfd;klajf'
-      }
-    ]
+    this.status = 200;
+    let token = 'TODO';//jwt.sign(this.user, privateKey, algorithm);//TODO
+    this.body = {token};
   }
 
   static *logout(next) {

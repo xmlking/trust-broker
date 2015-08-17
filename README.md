@@ -23,7 +23,7 @@ openssl rsa -in ~/.ssh/oauth.rsa -pubout > ~/.ssh/oauth.rsa.pub
 1. To start the MongoDB 
 
     ```bash
-     mongod -f data/mongod.yml
+    mongod -f data/mongod.yml
     ```
     
 2. To start the server.
