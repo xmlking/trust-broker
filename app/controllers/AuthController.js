@@ -2,21 +2,19 @@ import User from '../models/User'
 import Router from 'koa-router'
 import jwt from 'koa-jwt';
 
+import {CONFIG, config} from '../utils/globals';
+
 export default class AuthController {
 
   router:Router;
 
-  constructor(privateKey, algorithm) {
+  constructor() {
     this.router = new Router({
       prefix: '/auth'
     });
 
     this.router
-      .post('/login', AuthController.findUser, function *(next) {
-        let token = jwt.sign(this.user, privateKey, {algorithm});
-        this.status = 200;
-        this.body = {token};
-      })
+      .post('/login', AuthController.findUser, AuthController.signToken)
       .get('/logout', AuthController.logout)
       .get('/:id', AuthController.findById, AuthController.user);
     return this.router.routes();
@@ -44,9 +42,9 @@ export default class AuthController {
     this.body = this.user;
   }
 
-  static *login(next) {
+  static *signToken(next) {
+    let token = jwt.sign(this.user, CONFIG.jwt.privateKey, {algorithm: CONFIG.jwt.algorithm});
     this.status = 200;
-    let token = 'TODO';//jwt.sign(this.user, privateKey, algorithm);//TODO
     this.body = {token};
   }
 

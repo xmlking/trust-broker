@@ -1,0 +1,32 @@
+---
+# ===================================================================
+# RUNTIME-TIME CONFIG PROPERTIES
+#
+# This is multi-env properties file. Keep sensitive data in external
+# file that SysOps can source at runtime.
+# ===================================================================
+
+
+# ----------------------------------------
+# CORE PROPERTIES
+# ----------------------------------------
+
+# Server
+server:
+  port: 8080
+
+# JSON Web Tokens
+jwt:
+  algorithm: RS256
+  privateKey:
+  publicKey:
+  debug:
+    expiresInMinutes: 10
+    privateKeyPath: USER_HOME/.ssh/auth.rsa  # set paths to your rsa files
+    publicKeyPath: USER_HOME/.ssh/auth.rsa.pub
+    sharedSecret: "my dev shared secret"
+  release:
+    expiresInMinutes: 30
+#    privateKeyPath: SERVER_HOME/.ssh/auth.rsa
+#    publicKeyPath: SERVER_HOME/.ssh/auth.rsa.pub
+    sharedSecret: "my prod shared secret"

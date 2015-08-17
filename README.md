@@ -14,8 +14,8 @@ brew install node
 npm install -g babel
 
 # generate public and private keys for JWT
-openssl genrsa -out  ~/.ssh/oauth.rsa 1024
-openssl rsa -in ~/.ssh/oauth.rsa -pubout > ~/.ssh/oauth.rsa.pub
+openssl genrsa -out  ~/.ssh/auth.rsa 1024
+openssl rsa -in ~/.ssh/oauth.rsa -pubout > ~/.ssh/auth.rsa.pub
 ```
 
 ### Getting Started
@@ -30,6 +30,10 @@ openssl rsa -in ~/.ssh/oauth.rsa -pubout > ~/.ssh/oauth.rsa.pub
     
     ```bash
     npm start
+    # to run with dev env settings
+    NODE_ENV=DEV npm start
+    # to run with prod env settings
+    NODE_ENV=PROD npm start
     ```
     
 ### Test
@@ -44,3 +48,7 @@ $ curl -X POST -H "Authorization: Bearer verylongtokenstring :)" localhost:8080/
 ```
 
 verify signature at http://jwt.io/
+
+### Tips
+
+Use Chrome [Postman](https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop) for REST API testing.

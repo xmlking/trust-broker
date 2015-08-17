@@ -4,17 +4,14 @@ import bodyParser from'koa-bodyparser';
 import  Mongorito from  'mongorito';
 import jwt from 'koa-jwt';
 
+import {CONFIG, config} from './utils/globals';
 import ErrorHandler from  './utils/ErrorHandler';
 import  UserController from  './controllers/UserController';
 import  AuthController from  './controllers/AuthController';
 
+export default class AuthServer {
 
-const SHARED_SECRET = 'shared-secret';
-const ALGORITHM = 'RS256';
-
-export default class OauthServer {
-
-  constructor(port = 8080, publicKey = SHARED_SECRET, privateKey = SHARED_SECRET) {
+  constructor(port = 8080) {
 
     this.rootRouter = new Router({
       prefix: '/api'
@@ -26,10 +23,10 @@ export default class OauthServer {
     this.server = koa();
     this.server.use(ErrorHandler.catchAll);
     this.server.use(bodyParser());
-    this.server.use(new AuthController(privateKey, ALGORITHM));
+    this.server.use(new AuthController());
 
     // Everything behind this will be protected.
-    this.server.use(jwt({ secret: publicKey, algorithm: ALGORITHM}));
+    this.server.use(jwt({ secret: CONFIG.jwt.publicKey, algorithm: CONFIG.jwt.algorithm}));
     this.rootRouter.use('/v1', new UserController());
     this.server
       .use(this.rootRouter.routes())
