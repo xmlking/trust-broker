@@ -17,7 +17,7 @@ export default class AuthServer {
       prefix: '/api'
     });
 
-    Mongorito.connect('localhost/mydb');
+    Mongorito.connect('localhost/authDB');
 
     console.log(`Starting up new API Server on port: ${port}`);
     this.server = koa();
@@ -25,8 +25,11 @@ export default class AuthServer {
     this.server.use(bodyParser());
     this.server.use(new AuthController());
 
-    // Everything behind this will be protected.
-    this.server.use(jwt({ secret: CONFIG.jwt.publicKey, algorithm: CONFIG.jwt.algorithm}));
+     //Everything behind this will be protected.
+    this.server.use(jwt({ secret: CONFIG.secret.publicKey
+                          , audience: config('jwt').audience
+                          , issuer: config('jwt').issuer
+                        }));
     this.rootRouter.use('/v1', new UserController());
     this.server
       .use(this.rootRouter.routes())

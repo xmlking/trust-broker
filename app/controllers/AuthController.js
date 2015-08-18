@@ -23,12 +23,11 @@ export default class AuthController {
   static *findUser(next) {
     let username = this.request.body.username;
     let password = this.request.body.password;
-    let matchingUsers = yield User.and({username} ,{password}).find();
+    let matchingUsers = yield User.and({username}, {password}).find();
     if (matchingUsers.length != 1) {
       this.throw('User not found', 404);
     }
     this.user = matchingUsers[0];
-
     yield next;
   }
 
@@ -43,9 +42,16 @@ export default class AuthController {
   }
 
   static *signToken(next) {
-    let token = jwt.sign(this.user, CONFIG.jwt.privateKey, {algorithm: CONFIG.jwt.algorithm});
+    let token = jwt.sign( {
+                            name: this.user.get('firstName') +' '+ this.user.get('lastName'),
+                            sub: this.user.get('email'),
+                            role: this.user.get('role')
+                          },
+                          CONFIG.secret.privateKey,
+                          config('jwt')
+                        );
     this.status = 200;
-    this.body = {token};
+    this.body = token;
   }
 
   static *logout(next) {

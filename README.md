@@ -15,7 +15,7 @@ npm install -g babel
 
 # generate public and private keys for JWT
 openssl genrsa -out  ~/.ssh/auth.rsa 1024
-openssl rsa -in ~/.ssh/oauth.rsa -pubout > ~/.ssh/auth.rsa.pub
+openssl rsa -in ~/.ssh/auth.rsa -pubout > ~/.ssh/auth.rsa.pub
 ```
 
 ### Getting Started

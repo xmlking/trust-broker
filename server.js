@@ -6,8 +6,8 @@ import {CONFIG, config} from './app/utils/globals';
 //const USER_HOME = process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'];
 const USER_HOME = process.env.HOME || process.env.USERPROFILE;
 
-CONFIG.jwt.publicKey =  fs.readFileSync(config('jwt').publicKeyPath || USER_HOME +'/.ssh/auth.rsa.pub');
-CONFIG.jwt.privateKey = fs.readFileSync(config('jwt').privateKeyPath || USER_HOME +'/.ssh/auth.rsa');
+CONFIG.secret.publicKey =  fs.readFileSync(config('secret').publicKeyPath || USER_HOME +'/.ssh/auth.rsa.pub');
+CONFIG.secret.privateKey = fs.readFileSync(config('secret').privateKeyPath || USER_HOME +'/.ssh/auth.rsa');
 
 let serve = new AuthServer(process.env.PORT || config('server').port);
 
