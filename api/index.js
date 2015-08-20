@@ -1,7 +1,7 @@
 import koa from 'koa';
 import Router from 'koa-router';
 import bodyParser from'koa-bodyparser';
-import  Mongorito from  'mongorito';
+import  mongoose from  'mongoose';
 import jwt from 'koa-jwt';
 
 import {CONFIG, config} from './utils/globals';
@@ -17,7 +17,7 @@ export default class AuthServer {
       prefix: '/api'
     });
 
-    Mongorito.connect('localhost/authDB');
+    mongoose.connect('localhost/authDB');
 
     console.log(`Starting up new API Server on port: ${port}`);
     this.server = koa();
@@ -40,7 +40,7 @@ export default class AuthServer {
   }
 
   close() {
-    return Promise.resolve(Mongorito.disconnect());
+    return Promise.resolve(mongoose.disconnect());
   }
 
 }

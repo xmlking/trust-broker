@@ -1,7 +1,7 @@
 import fs from 'fs';
-import AuthServer from './app/index';
+import AuthServer from './api/index';
 
-import {CONFIG, config} from './app/utils/globals';
+import {CONFIG, config} from './api/utils/globals';
 
 //const USER_HOME = process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME'];
 const USER_HOME = process.env.HOME || process.env.USERPROFILE;

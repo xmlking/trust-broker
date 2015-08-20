@@ -1,6 +1,9 @@
-import User from '../models/User'
 import Router from 'koa-router'
+
 import Util from '../utils/Util'
+import User from '../models/User'
+import ErrorHandler from  '../utils/ErrorHandler';
+
 
 export default class UserController {
 
@@ -26,8 +29,9 @@ export default class UserController {
   }
 
   static *index(next) {
-    let users = yield User.limit(20).skip(0).find();
-    let count = yield User.count();
+    let query = User.find().skip(0).limit(20);
+    let users = yield query.exec();
+    let count = yield User.count(); //query.count()
     this.body = {users, count};
   }
 
@@ -42,7 +46,7 @@ export default class UserController {
     try {
       result = yield newUser.save();
     } catch (err) {
-      this.throw('Unable to create User', 500);
+      this.throw( JSON.stringify(ErrorHandler.extractMongoErrors(err)), 500);
     }
 
     this.status = 201;
@@ -56,8 +60,8 @@ export default class UserController {
     let result;
     try {
       result = yield this.user.save();
-    } catch (e) {
-      this.throw('Unable to update User', 500);
+    } catch (err) {
+      this.throw( JSON.stringify(ErrorHandler.extractMongoErrors(err)), 500);
     }
     this.body = result
   }
@@ -66,8 +70,8 @@ export default class UserController {
     let result;
     try {
       result = yield this.user.remove();
-    } catch (e) {
-      this.throw('Unable to delete User', 500);
+    } catch (err) {
+      this.throw( JSON.stringify(ErrorHandler.extractMongoErrors(err)), 500);
     }
     this.body = result
   }

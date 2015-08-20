@@ -40,3 +40,7 @@ jwt:
   release:
     expiresInMinutes: 30
 
+
+# bcrypt
+bcrypt:
+  saltWorkFactor: 8

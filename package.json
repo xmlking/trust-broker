@@ -26,6 +26,7 @@
   },
   "homepage": "https://github.com/xmlking/trust-broker#readme",
   "dependencies": {
+    "bcrypt": "^0.8.5",
     "js-yaml": "^3.3.1",
     "koa": "^0.21.0",
     "koa-bodyparser": "^2.0.1",

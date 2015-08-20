@@ -24,4 +24,19 @@ export default class ErrorHandler {
     }
   }
 
+  static extractMongoErrors(err) {
+    let errors = [];
+      if (err.name == 'ValidationError') {
+        for (let field in err.errors) {
+          let message = err.errors[field].message;
+          errors.push({field,  message});
+        }
+      } else if(11000 === err.code || 11001 === err.code){
+        errors.push({global:'UniqueConstraintError', message:'Username/Email must be unique'});
+        } else {
+        errors.push({global:err.name, message:err.message});
+      }
+    return errors;
+  }
+
 }
