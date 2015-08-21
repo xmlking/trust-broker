@@ -1,3 +1,4 @@
+import https from 'https';
 import koa from 'koa';
 import Router from 'koa-router';
 import bodyParser from'koa-bodyparser';
@@ -35,7 +36,8 @@ export default class AuthServer {
       .use(this.rootRouter.routes())
       .use(this.rootRouter.allowedMethods());
     //console.log(this.rootRouter.routes());
-    this.server.listen(port);
+    //this.server.listen(port);
+    https.createServer({ key:CONFIG.server.ssl.key,cert:CONFIG.server.ssl.cert },this.server.callback()).listen(port);
 
   }
 

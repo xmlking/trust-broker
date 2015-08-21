@@ -13,19 +13,39 @@
 
 # Server
 server:
-  port: 8080
+  port: 8443
+  ssl:
+    key:
+    cert:
+    ca:
+    requestCert: true,
+    rejectUnauthorized: fals
+  debug:
+    hose: localhost
+    ssl:
+      passphrase:
+      keyFile: USER_HOME/.ssh/server.pem
+      certFile: USER_HOME/.ssh/server.crt
+      caFile: USER_HOME/.ssh/ca.crt
+  release:
+    hose: mydomain.com
+    ssl:
+      passphrase:
+#      keyFile: SERVER_HOME/.ssh/server.pem
+#      certFile: SERVER_HOME/.ssh/server.pem
+#      caFile: SERVER_HOME/.ssh/ca.crt
 
 # Raw Keys
 secret:
   privateKey:
   publicKey:
   debug:
-    privateKeyPath: USER_HOME/.ssh/auth.rsa  # set paths to your rsa files
-    publicKeyPath: USER_HOME/.ssh/auth.rsa.pub
+    privateKeyFile: USER_HOME/.ssh/auth.rsa  # set paths to your rsa files
+    publicKeyFile: USER_HOME/.ssh/auth.rsa.pub
     sharedSecret: "my dev shared secret"
   release:
-#    privateKeyPath: SERVER_HOME/.ssh/auth.rsa
-#    publicKeyPath: SERVER_HOME/.ssh/auth.rsa.pub
+#    privateKeyFile: SERVER_HOME/.ssh/auth.rsa
+#    publicKeyFile: SERVER_HOME/.ssh/auth.rsa.pub
     sharedSecret: "my prod shared secret"
 
 # koa-jwt options
@@ -44,3 +64,8 @@ jwt:
 # bcrypt
 bcrypt:
   saltWorkFactor: 8
+
+# login
+login:
+  maxLoginAttempts: 5
+  lockTime: 60000 #7200000
