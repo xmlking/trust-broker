@@ -19,7 +19,7 @@ export default class ErrorHandler {
         this.status = err.status;
         this.body = 'You don\'t have a signed token dude :('
       } else {
-        throw e; // Pass the error to the next handler since it wasn't a JWT error.
+        throw err; // Pass the error to the next handler since it wasn't a JWT error.
       }
     }
   }
