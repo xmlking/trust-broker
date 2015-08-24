@@ -1,18 +1,38 @@
 import Router from 'koa-router'
+import jwt from 'koa-jwt';
 
 import Util from '../utils/Util'
 import User from '../models/User'
 import ErrorHandler from  '../utils/ErrorHandler';
+import {AuthorizationError} from "../utils/errors"
+import {requestMapping} from '../utils/koa-router-decorators';
+import config from 'config';
 
+const secret = config.get('jwt.publicKey');
+const { audience, issuer } = config.get('jwt.options');
 
+//noinspection ES6Validation
+@requestMapping('/users')
 export default class UserController {
 
   router:Router;
 
   constructor() {
+
     this.router = new Router({
-      prefix: '/users'
+      prefix: UserController.path//'/users'
     });
+
+    this.router.use(
+      jwt({secret, audience, issuer}),
+      function *(next) {
+        //console.log(this.state.user);
+        if (!this.state.user.roles.includes('admin')) {
+          throw new AuthorizationError(AuthorizationError.code.FORBIDDEN, { message: 'you are not authorized for this API'});
+        }
+      yield next;
+    });
+
     this.router
       .get('/', UserController.index)
       .get('/:id', UserController.findById, UserController.get)
@@ -28,6 +48,8 @@ export default class UserController {
     yield next;
   }
 
+  //noinspection ES6Validation
+  @requestMapping('/', 'GET')
   static *index(next) {
     let query = User.find().skip(0).limit(20);
     let users = yield query.exec();
@@ -36,7 +58,6 @@ export default class UserController {
   }
 
   static *get() {
-    console.log('requesting user', this.state.user);
     this.body = this.user;
   }
 

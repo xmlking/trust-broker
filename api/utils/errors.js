@@ -17,6 +17,11 @@ export class NotFoundError extends ExtendableError {
 }
 
 export class AuthenticationError extends ExtendableError {
+  static code = {
+    NOT_FOUND: 0,
+    PASSWORD_INCORRECT: 1,
+    MAX_ATTEMPTS: 2
+  };
   constructor(code, error) {
     super(error.message);
     this.code = code;
@@ -26,6 +31,9 @@ export class AuthenticationError extends ExtendableError {
 }
 
 export class AuthorizationError extends ExtendableError {
+  static code = {
+    FORBIDDEN: 0,
+  };
   constructor(code, error) {
     super(error.message);
     this.code = code;

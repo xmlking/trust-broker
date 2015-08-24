@@ -3,12 +3,10 @@
  * to disable, edit config/environment/index.js, and set `seedDB: false`
  */
 
-'use strict';
+//import mongoose from  'mongoose';
+import User from '../models/User'
 
-var mongoose = require('mongoose');
-var env = process.env.NODE_ENV || 'development';
-
-var User = require('../api/user/user.model').model;
+let env = process.env.NODE_ENV || 'development';
 
 /*
 // Insert some data needed to bootstrap or init the application
@@ -21,30 +19,38 @@ if ('production' === env) {
 /*
  * Insert dummy data to test the application
  */
-exports.users = [{
-	provider: 'local',
-	name: 'Test User',
-	password: 'password',
-	active: true
-}, {
-	provider: 'local',
-	role: 'admin',
-	name: 'Admin',
-	password: 'password',
-	active: true
-}, {
-	provider: 'local',
-	role: 'root',
-	name: 'Root',
-	password: 'password',
-	active: true
-}];
+const users = [
+  {
+    'username': 'root',
+    'password': 'root0Demo',
+    'name': 'root demo',
+    'provider': 'local',
+    'email': 'root@gmail.com',
+    'roles': ['admin','user']
+  },
+  {
+    'username': 'sumo1',
+    'password': 'sumo1Demo',
+    'name': 'sumo1 demo',
+    'provider': 'local',
+    'email': 'sumo1@gmail.com',
+    'roles': ['user']
+  },
+  {
+    'username': 'sumo2',
+    'password': 'sumo2Demo',
+    'name': 'sumo2 demo',
+    'provider': 'local',
+    'email': 'sumo2@gmail.com',
+    'roles': ['user']
+  }
+];
 
 if ('development' === env) {
 	console.log('Populating test and development data ...');
 
-	User.find({}).remove(function () {
-		User.create(exports.users, function (err) {
+	User.find({}).remove( () => {
+		User.create(users, function (err) {
 			if (err) {
 				console.error('Error while populating users: %s', err);
 			} else {

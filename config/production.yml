@@ -1,0 +1,46 @@
+# production config
+
+# Server
+server:
+  options:
+    port: 443
+    host: auth-host
+  ssl:
+    options:
+      ca:
+    files:
+      key: .ssh/server.pem
+      cert: .ssh/server.crt
+      ca: .ssh/ca.crt
+
+# mongodb
+mongo:
+  uri: mongosA:27017,mongosB:27017/authDB
+  options:
+    mongos: true
+    server:
+      poolSize: 5
+    replset:
+      rs_name: myReplicaSetName
+    user:
+    pass:
+
+# jwt
+jwt:
+  privateKeyFile: server_home/.ssh/auth.rsa
+  publicKeyFile: server_home/.ssh/auth.rsa.pub
+  options:
+    issuer: http://auth-host:8080/auth
+    audience:
+      - http://api-host:8080/api/v1/users
+      - http://api-host:8080/api/v1/providers
+    expiresInMinutes: 30
+
+# bcrypt
+bcrypt:
+  saltWorkFactor: 10
+
+# login
+login:
+  maxLoginAttempts: 5
+  lockTime: 7200000

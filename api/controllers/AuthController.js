@@ -1,8 +1,7 @@
 import User from '../models/User'
 import Router from 'koa-router'
 import jwt from 'koa-jwt';
-
-import {CONFIG, config} from '../utils/globals';
+import config from 'config';
 
 export default class AuthController {
 
@@ -41,10 +40,10 @@ export default class AuthController {
     let token = jwt.sign( {
                             name: this.user.name,
                             sub: this.user.email,
-                            role: this.user.role
+                            roles: this.user.roles
                           },
-                          CONFIG.secret.privateKey,
-                          config('jwt')
+                          config.get('jwt.privateKey'),
+                          config.get('jwt.options')
                         );
     this.status = 200;
     this.body = token;
@@ -57,4 +56,3 @@ export default class AuthController {
   }
 
 }
-

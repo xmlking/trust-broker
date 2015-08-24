@@ -1,9 +1,8 @@
 import {model, index, pre, post} from 'mongoose-decorators';
-import co from 'co';
 import Bcrypt from "../utils/Bcrypt"
 import {AuthenticationError} from "../utils/errors"
 import {Validations} from "../utils/ValidationHelper"
-import {CONFIG, config} from '../utils/globals';
+import config from 'config';
 
 /**
  * 1. store only hashed passwords
@@ -12,20 +11,25 @@ import {CONFIG, config} from '../utils/globals';
  * 4. The User model should expose the reason for a failed login attempt to the application
  */
 
-const SALT_WORK_FACTOR = config('bcrypt').saltWorkFactor || 10
-      , MAX_LOGIN_ATTEMPTS = config('login').maxLoginAttempts || 5
-      , LOCK_TIME = config('login').lockTime || 2 * 60 * 60 * 1000;
+const SALT_WORK_FACTOR = config.get('bcrypt.saltWorkFactor')
+      , MAX_LOGIN_ATTEMPTS = config.get('login.maxLoginAttempts')
+      , LOCK_TIME = config.get('login.lockTime');
 
-const failedLogin = {
-  NOT_FOUND: 0,
-  PASSWORD_INCORRECT: 1,
-  MAX_ATTEMPTS: 2
-};
+//const failedLogin = {
+//  NOT_FOUND: 0,
+//  PASSWORD_INCORRECT: 1,
+//  MAX_ATTEMPTS: 2
+//};
 
 //noinspection ES6Validation
 @model(
   {
-    username: {type: String, required: Validations.general.required, unique: true, lowercase: true},
+    username: {
+      type: String,
+      required: Validations.general.required,
+      unique: true,
+      lowercase: true
+    },
     password: {
       type: String,
       validate: Validations.password.pattern
@@ -42,13 +46,17 @@ const failedLogin = {
       validate: Validations.email.pattern
     },
     name: {type: String},
-    role: {
+    //role: {
+    //  type: String,
+    //  enum: {values: ['admin', 'user'], default: 'user', message: Validations.role.invalid}
+    //},
+    roles: [{
       type: String,
       enum: {values: ['admin', 'user'], default: 'user', message: Validations.role.invalid}
-    },
+    }],
     enabled: {type: Boolean, default: false},
-    accountExpired: Boolean,
-    passwordExpired: Boolean,
+    accountExpired:  {type: Boolean, default: false},
+    passwordExpired:  {type: Boolean, default: false},
 
     loginAttempts: { type: Number, required: true, default: 0 },
     lockUntil: { type: Number }
@@ -69,17 +77,16 @@ export default class User {
   //noinspection ES6Validation
   @pre('save')
   hashPassword(next) {
-    var self = this;
     // Only hash the password if it has been modified (or is new)
     if (this.isModified('password') || this.isNew) {
-      co(function*() {
+      (async () =>{
         try {
-          self.password = yield Bcrypt.hash(self.password, SALT_WORK_FACTOR);
+          this.password = await Bcrypt.hash(this.password, SALT_WORK_FACTOR);
           next();
         } catch (err) {
           next(err);
         }
-      });
+      })();
     } else {
       return next();
     }
@@ -115,13 +122,13 @@ export default class User {
     let user = yield this.findOne({'username': username.toLowerCase()}).exec();
 
     // make sure the user exists
-    if (!user) throw new AuthenticationError(failedLogin.NOT_FOUND, { message: 'User not found'});
+    if (!user) throw new AuthenticationError(AuthenticationError.code.NOT_FOUND, { message: 'User not found'});
 
     // check if the account is currently locked
     if (user.isLocked) {
       // just increment login attempts if account is already locked
       yield user.incLoginAttempts();
-      throw new AuthenticationError(failedLogin.MAX_ATTEMPTS, { message: `The maximum number of failed login attempts has been reached. Wait for ${LOCK_TIME/1000} sec`});
+      throw new AuthenticationError(AuthenticationError.code.MAX_ATTEMPTS, { message: `The maximum number of failed login attempts has been reached. Wait for ${LOCK_TIME/1000} sec`});
     }
 
     // test for a matching password
@@ -140,7 +147,7 @@ export default class User {
 
     // password is incorrect, so increment login attempts before responding
     yield user.incLoginAttempts();
-    throw new AuthenticationError(failedLogin.PASSWORD_INCORRECT, { message: 'Password does not match'});
+    throw new AuthenticationError(AuthenticationError.code.PASSWORD_INCORRECT, { message: 'Password does not match'});
   }
 
   static *byEmail(email) {
@@ -156,4 +163,3 @@ export default class User {
   }
 
 }
-

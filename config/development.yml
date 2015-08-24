@@ -1,0 +1,37 @@
+# devlopment config
+
+# Server
+server:
+  options:
+    port: 8443
+    host: localhost
+  ssl:
+    files:
+      key: .ssh/server.pem
+      cert: .ssh/server.crt
+
+# mongodb
+mongo:
+  uri: localhost/authDB
+
+
+# jwt
+jwt:
+  privateKeyFile: .ssh/auth.rsa
+  publicKeyFile: .ssh/auth.rsa.pub
+  # koa-jwt options
+  options:
+    issuer: http://localhost:8080/auth
+    audience:
+      - http://localhost:8080/api/v1/users
+      - http://localhost:8080/api/v1/providers
+    expiresInMinutes: 10
+
+# bcrypt
+bcrypt:
+  saltWorkFactor: 8
+
+# login
+login:
+  maxLoginAttempts: 3
+  lockTime: 60000
