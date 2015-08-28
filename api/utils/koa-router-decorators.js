@@ -1,23 +1,21 @@
-//@RequestMapping(value = "/ex/foos/{id}")
-//@RequestMapping(value = "/ex/foos", method = GET, headers = "Accept=application/json")
+// @route("/ex/foos/{id}")
+// @route({path: "/ex/foos", method: "GET", roles: ['admin']})
+// @route({path: "/ex/foos", method: "GET", headers: "Accept=application/json"})
 import Router from 'koa-router'
 
-export function requestMapping(path, method) {
-  return (target)  => {
-    target.path = path;
-    target.method = method;
-    console.log('in requestMapping path',path);
-    console.log('in requestMapping method',method);
-    console.log('in requestMapping target',target);
-    console.log('in requestMapping target.constructor',target.index); //target.constructor.name
-    console.log('in requestMapping instanceProps',Object.getOwnPropertyNames(target.prototype));
-    console.log('in requestMapping staticProps',Object.getOwnPropertyNames(target));
 
-    //let router = new Router({
-    //  prefix: path
-    //});
-    //
-    //router.get('/', target.index);
-    //return  router.routes();
+export function route(path, method, roles) {
+  return (target,key,descriptor)  => {
+    // apply only for constructor
+    if(!key && path) {
+      target.prototype.router = new Router({
+        prefix: path
+      });
+
+      // TODO : use Decorator's Metadata Reflection API
+      //target.prototype.router
+      //  .get('/', target.index)
+    }
+
   }
 }

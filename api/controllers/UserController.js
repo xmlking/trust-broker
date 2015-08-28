@@ -5,23 +5,19 @@ import Util from '../utils/Util'
 import User from '../models/User'
 import ErrorHandler from  '../utils/ErrorHandler';
 import {AuthorizationError} from "../utils/errors"
-import {requestMapping} from '../utils/koa-router-decorators';
+import {route} from '../utils/koa-router-decorators';
 import config from 'config';
 
 const secret = config.get('jwt.publicKey');
 const { audience, issuer } = config.get('jwt.options');
 
 //noinspection ES6Validation
-@requestMapping('/users')
+@route('/users')
 export default class UserController {
 
   router:Router;
 
   constructor() {
-
-    this.router = new Router({
-      prefix: UserController.path//'/users'
-    });
 
     this.router.use(
       jwt({secret, audience, issuer}),
@@ -49,7 +45,7 @@ export default class UserController {
   }
 
   //noinspection ES6Validation
-  @requestMapping('/', 'GET')
+  @route('/', 'GET')
   static *index(next) {
     let query = User.find().skip(0).limit(20);
     let users = yield query.exec();
