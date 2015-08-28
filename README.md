@@ -1,6 +1,6 @@
-## Trust Broker - JWT Server
+## Trust Broker - JWT Issuer
 
-Multi Identity Provider / Broker - takes username/password, APIKey, Facebook or Google identity; issues **JSON Web Token.**
+Multi Identity Provider / Broker - take username/password, APIKey, Facebook or Google identity; issue **JSON Web Token.**
 
 ### Prerequisite 
 
