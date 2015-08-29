@@ -23,8 +23,10 @@ export default class AuthServer {
     });
 
     mongoose.connect(uri, options);
+    // Comment like below to disable seed data
     require('./utils/seed');
 
+    console.info(`Server started on https://${config.get('server.options.host')}:${config.get('server.options.port')}`);
     this.server = koa();
     this.server.use(ErrorHandler.catchAll);
     this.server.use(bodyParser());

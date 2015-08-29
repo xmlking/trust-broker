@@ -2,6 +2,7 @@
 
 ### Project ###
 NOTES.md
+dist/
 config/local.yml
 .ssh
 

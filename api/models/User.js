@@ -15,12 +15,6 @@ const SALT_WORK_FACTOR = config.get('bcrypt.saltWorkFactor')
       , MAX_LOGIN_ATTEMPTS = config.get('login.maxLoginAttempts')
       , LOCK_TIME = config.get('login.lockTime');
 
-//const failedLogin = {
-//  NOT_FOUND: 0,
-//  PASSWORD_INCORRECT: 1,
-//  MAX_ATTEMPTS: 2
-//};
-
 //noinspection ES6Validation
 @model(
   {

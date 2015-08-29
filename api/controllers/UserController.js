@@ -1,17 +1,17 @@
 import Router from 'koa-router'
 import jwt from 'koa-jwt';
+import {route, HttpMethod} from 'koa-router-decorators';
 
 import Util from '../utils/Util'
 import User from '../models/User'
 import ErrorHandler from  '../utils/ErrorHandler';
 import {AuthorizationError} from "../utils/errors"
-import {route} from '../utils/koa-router-decorators';
+//import {route, HttpMethod} from '../utils/koa-router-decorators';
 import config from 'config';
 
 const secret = config.get('jwt.publicKey');
 const { audience, issuer } = config.get('jwt.options');
 
-//noinspection ES6Validation
 @route('/users')
 export default class UserController {
 
@@ -30,11 +30,10 @@ export default class UserController {
     });
 
     this.router
-      .get('/', UserController.index)
       .get('/:id', UserController.findById, UserController.get)
-      .post('/', UserController.create)
       .put('/:id', UserController.findById, UserController.update)
       .delete('/:id', UserController.findById, UserController.delete);
+
     return this.router.routes();
   }
 
@@ -44,8 +43,7 @@ export default class UserController {
     yield next;
   }
 
-  //noinspection ES6Validation
-  @route('/', 'GET')
+  @route('/', HttpMethod.GET)
   static *index(next) {
     let query = User.find().skip(0).limit(20);
     let users = yield query.exec();
@@ -57,6 +55,7 @@ export default class UserController {
     this.body = this.user;
   }
 
+  @route('/', HttpMethod.POST)
   static *create(next) {
     let newUser =  new User(this.request.body);
     let result;
