@@ -26,6 +26,9 @@ brew install node
 # install Babel
 npm install -g babel
 
+# install npm dependencies  
+npm install
+
 # generate public and private keys for JWT
 openssl genrsa -out  .ssh/auth.rsa 1024
 openssl rsa -in .ssh/auth.rsa -pubout > .ssh/auth.rsa.pub
@@ -58,12 +61,14 @@ openssl x509 -req -days 365 -in .ssh/csr.pem -signkey .ssh/server.pem -out .ssh/
 ### Test
 
 ```bash
-$ curl localhost:8080/api/v1/users
+$ curl https://localhost:8443/api/v1/users
 # You don't have a signed token dude :(
-$ curl -X POST -H "Content-Type: application/json" localhost:8080/auth/login -d '{"username": "admin", "password": "admin"}'
+$ curl -X POST -H "Content-Type: application/json" https://localhost:8443/auth/login -d '{"username": "root", "password": "root0Demo"}'
 # {"token": "verylongtokenstring :)"}
-$ curl -X POST -H "Authorization: Bearer verylongtokenstring :)" localhost:8080/api/v1/users -d '{"username": "sumo", "password": "sumo"}'
+$ curl -H "Authorization: Bearer verylongtokenstring :)" https://localhost:8443/api/v1/users
 # You are logged in dude! Welcome!
+$ curl -X POST -H "Authorization: Bearer verylongtokenstring :)" https://localhost:8443/api/v1/users -d '{"username": "sumo5", "password": "sumo5Demo","name": "sumo5 demo","provider": "local","email": "sumo5@gmail.com","roles": ["user"]}'
+# An account is created
 ```
 
 verify signature at http://jwt.io/
@@ -86,10 +91,14 @@ passport:
     clientID: 1231231313
     clientSecret: fsfsfsfsfsfsfsf
     callbackURL: https://localhost:8443/auth/facebook/callback
+  google:
+    clientID: sdfsfsfds
+    clientSecret: fsdfdsfsfsfsdf
+    callbackURL: https://localhost:8443/auth/google/callback
 ```
 
 ### Tips
 
 Use Chrome [Postman](https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop) for REST API testing.
 
-Since you are using self-signed SSL Certs, first try to access URL in chrome first and accept the cert, before trying in Postman.  
+Since you are using self-signed SSL Certs, first try to access URL in chrome and accept the cert, before trying in Postman.  
