@@ -2,6 +2,14 @@
 
 Multi Identity Provider / Broker - take username/password, APIKey, Facebook or Google identity; issue **JSON Web Token.**
 
+
+### Features 
+
+1. Support authenticate strategies ranging from 
+  1. verifying a username and password with DB or LDAP
+  2. delegated authentication using OAuth or 
+  3. federated authentication using OpenID Connect.
+
 ### Prerequisite 
 
 ```bash
@@ -56,6 +64,27 @@ $ curl -X POST -H "Authorization: Bearer verylongtokenstring :)" localhost:8080/
 
 verify signature at http://jwt.io/
 
+### Development 
+create `config/local.yml` file to keep your sensitive config data for local development environment. 
+Don't check-in this file into Source Code Control System.
+
+```yml
+# mongodb
+mongo:
+  options:
+#    user: myUserName
+#    pass: myPassword
+
+# Passport
+passport:
+  facebook:
+    clientID: 1231231313
+    clientSecret: fsfsfsfsfsfsfsf
+    callbackURL: https://localhost:8443/auth/facebook/callback
+```
+
 ### Tips
 
 Use Chrome [Postman](https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop) for REST API testing.
+
+Since you are using self-signed SSL Certs, first try to access URL in chrome first and accept the cert, before trying in Postman.  
