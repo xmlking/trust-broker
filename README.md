@@ -66,7 +66,8 @@ verify signature at http://jwt.io/
 
 ### Development 
 create `config/local.yml` file to keep your sensitive config data for local development environment. 
-Don't check-in this file into Source Code Control System.
+
+*Don't check-in this file into Source Code Control System.*
 
 ```yml
 # mongodb
