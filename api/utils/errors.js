@@ -42,4 +42,13 @@ export class AuthorizationError extends ExtendableError {
   }
 }
 
+export class BadRequestError extends ExtendableError {
+  constructor(code, error) {
+    super(error.message);
+    this.code = code;
+    this.status = 400;
+    this.inner = error;
+  }
+}
+
 

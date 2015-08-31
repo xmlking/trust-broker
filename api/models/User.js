@@ -31,7 +31,7 @@ const SALT_WORK_FACTOR = config.get('bcrypt.saltWorkFactor')
     provider: {
       type: String,
       required:true,
-      enum: {values: ['local', 'google', 'facebook']}
+      enum: {values: ['local', 'google-openidconnect', 'facebook']}
     },
     email: {
       type: String,
@@ -72,7 +72,7 @@ export default class User {
   @pre('save')
   hashPassword(next) {
     // Only hash the password if it has been modified (or is new)
-    if (this.isModified('password') || this.isNew) {
+    if (this.password && (this.isModified('password') || this.isNew)) {
       (async () =>{
         try {
           this.password = await Bcrypt.hash(this.password, SALT_WORK_FACTOR);
@@ -110,10 +110,10 @@ export default class User {
     return yield this.update(updates);
   };
 
-
+  // For LocalStrategy
   static *matchUser(username, password) {
 
-    let user = yield this.findOne({'username': username.toLowerCase()}).exec();
+    let user = yield this.findOne({'username': username.toLowerCase(), provider: 'local'}).exec();
 
     // make sure the user exists
     if (!user) throw new AuthenticationError(AuthenticationError.code.NOT_FOUND, { message: 'User not found'});
@@ -142,6 +142,21 @@ export default class User {
     // password is incorrect, so increment login attempts before responding
     yield user.incLoginAttempts();
     throw new AuthenticationError(AuthenticationError.code.PASSWORD_INCORRECT, { message: 'Password does not match'});
+  }
+
+  // profile: Passport profile
+  static *findOrCreate(profile) {
+    let user = yield this.findOne({username: profile.id, provider: profile.provider}).exec();
+    if(user) return user;
+    user = new User( {
+      username: profile.id,
+      name: profile.displayName,
+      provider: profile.provider,
+      email: profile.emails[0].value,
+      'roles': ['user']
+    });
+    user = yield user.save();
+    return user;
   }
 
   static *byEmail(email) {

@@ -10,9 +10,9 @@ Multi Identity Provider / Broker - take username/password, APIKey, Facebook or G
   2. delegated authentication using OAuth or 
   3. federated authentication using OpenID Connect.
 2. Account locking 
-  1. A user's account will be "locked" after some number of consecutive failed login attempts.
-  2. A user's account will become unlocked once a sufficient amount of time has passed.
-  3. The User model expose the reason for a failed login attempt to the application.
+  1. user's account will be "locked" after some number of consecutive failed login attempts.
+  2. user's account will become unlocked once a sufficient amount of time has passed.
+  3. system will expose the reason for a failed login attempt to the application.
   
 ### Prerequisite 
 

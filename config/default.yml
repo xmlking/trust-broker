@@ -52,3 +52,22 @@ bcrypt:
 login:
   maxLoginAttempts: 5
   lockTime: 7200000
+
+# Passport
+passport:
+  facebook:
+    clientID: FACEBOOK_APP_ID
+    clientSecret: FACEBOOK_APP_SECRET
+    callbackURL: https://localhost:8443/auth/facebook/callback
+    profileFields:
+      - id
+      - birthday
+      - name
+      - displayName
+      - email
+      - gender
+  google:
+    clientID: FACEBOOK_APP_ID
+    clientSecret: FACEBOOK_APP_SECRET
+    callbackURL: https://localhost:8443/auth/google/callback
+#    userInfoURL: https://www.googleapis.com/plus/v1/people/me
