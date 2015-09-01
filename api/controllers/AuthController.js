@@ -1,27 +1,25 @@
 import Router from 'koa-router'
 import jwt from 'koa-jwt';
 import passport from 'koa-passport';
+import {route, HttpMethod} from 'koa-router-decorators';
 import config from 'config';
 
 import User from '../models/User';
+import {NotFoundError, NotImplementedError, AuthorizationError} from "../utils/errors"
 
+@route('/auth')
 export default class AuthController {
 
   router:Router;
 
   constructor() {
-    this.router = new Router({
-      prefix: '/auth'
-    });
 
     this.router
       .post('/login', AuthController.localAuth, AuthController.signToken)
-      .get('/facebook',AuthController.facebookAuth)
       .get('/facebook/callback',AuthController.facebookAuthCallback, AuthController.signToken)
-      .get('/google',AuthController.googleAuth)
       .get('/google/callback',AuthController.googleAuthCallback, AuthController.signToken)
-      .get('/logout', AuthController.logout)
-      .get('/:id', AuthController.findById, AuthController.user);
+      .get('/forgot_password/:username', AuthController.findByUsername, AuthController.forgotPassword);
+
     return this.router.routes();
   }
 
@@ -40,6 +38,7 @@ export default class AuthController {
     yield next;
   }
 
+  @route('/facebook', HttpMethod.GET)
   static *facebookAuth(next) {
     yield passport.authenticate('facebook', {scope: ['email']}).call(this, next);
   }
@@ -57,6 +56,7 @@ export default class AuthController {
     yield next;
   }
 
+  @route('/google', HttpMethod.GET)
   static *googleAuth(next) {
     yield passport.authenticate('google-openidconnect', {scope: ['email', 'profile']}).call(this, next);
   }
@@ -85,10 +85,11 @@ export default class AuthController {
       config.get('jwt.options')
     );
     this.status = 200;
-    this.body = token;
+    this.body = {token};
   }
 
   //Force token expire?
+  @route('/logout', HttpMethod.GET)
   static *logout(next) {
     this.logout();
     this.body = {
@@ -96,14 +97,15 @@ export default class AuthController {
     };
   }
 
-  static *findById(next) {
-    this.user = yield User.findById(this.params.id);
-    if (!this.user) this.throw('User not found', 404);
+  static *findByUsername(next) {
+    this.user = yield User.byUsername(this.params.username);
+    if (!this.user) throw new NotFoundError(NotFoundError.code.ENTITY_NOT_FOUND, { message: 'User not found'});
     yield next;
   }
 
-  static *user(next) {
-    this.body = this.user;
+  static *forgotPassword(next) {
+    throw new NotImplementedError(0, { message: 'forgot password not implemented yet'});
+    //this.body = this.user;
   }
 
 }

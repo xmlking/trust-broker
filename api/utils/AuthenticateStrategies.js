@@ -37,7 +37,7 @@ passport.use(new GoogleStrategy(
   config.get('passport.google'),
   function(iss, sub, profile, accessToken, refreshToken, done) {
     try {
-      // FIXME: google-openidconnect fix
+      // FIXME: google-openidconnect plugin fix
       if(!profile.emails) {
         profile.emails = [{value: profile._json.email}]
       }

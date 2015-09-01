@@ -163,6 +163,10 @@ export default class User {
     return yield this.findOne({email}).exec();
   }
 
+  static *byUsername(username) {
+    return yield this.findOne({username}).exec();
+  }
+
   *comparePassword(candidatePassword) {
     // User password is not set yet
     if (!this.hasPassword()) {

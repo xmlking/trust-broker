@@ -9,7 +9,7 @@ import mongoose from  'mongoose';
 import config from 'config';
 import  './utils/AuthenticateStrategies';
 import passport from 'koa-passport';
-import ErrorHandler from  './utils/ErrorHandler';
+import ErrorHandler from  './middleware/ErrorHandler';
 import UserController from  './controllers/UserController';
 import AuthController from  './controllers/AuthController';
 
@@ -28,10 +28,9 @@ export default class AuthServer {
     // Comment like below to disable seed data
     require('./utils/seed');
 
-
     this.server = koa();
-    this.server.use(passport.initialize());
     this.server.use(ErrorHandler.catchAll);
+    this.server.use(passport.initialize());
     this.server.use(bodyParser());
 
     this.server.use(new AuthController());
@@ -40,7 +39,7 @@ export default class AuthServer {
     this.server
       .use(this.rootRouter.routes())
       .use(this.rootRouter.allowedMethods());
-    //console.log(this.rootRouter.routes());
+    // console.log(this.rootRouter); // debug routes
     https.createServer(config.get('server.ssl.options'), this.server.callback()).listen(config.get('server.options'),
       () => {
         console.info(`Server started on https://${config.get('server.options.host')}:${config.get('server.options.port')}`);

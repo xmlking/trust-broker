@@ -4,9 +4,8 @@ import {route, HttpMethod} from 'koa-router-decorators';
 
 import Util from '../utils/Util'
 import User from '../models/User'
-import ErrorHandler from  '../utils/ErrorHandler';
-import {AuthorizationError} from "../utils/errors"
-//import {route, HttpMethod} from '../utils/koa-router-decorators';
+import AuthZ from '../middleware/AuthZ'
+import {NotFoundError, AuthorizationError, MongoError} from "../utils/errors"
 import config from 'config';
 
 const secret = config.get('jwt.publicKey');
@@ -20,14 +19,10 @@ export default class UserController {
   constructor() {
 
     this.router.use(
+      // add middleware
       jwt({secret, audience, issuer}),
-      function *(next) {
-        //console.log(this.state.user);
-        if (!this.state.user.roles.includes('admin')) {
-          throw new AuthorizationError(AuthorizationError.code.FORBIDDEN, { message: 'you are not authorized for this API'});
-        }
-      yield next;
-    });
+      AuthZ.isAdmin
+    );
 
     this.router
       .get('/:id', UserController.findById, UserController.get)
@@ -39,7 +34,7 @@ export default class UserController {
 
   static *findById(next) {
     this.user = yield User.findById(this.params.id);
-    if (!this.user) this.throw('User not found', 404);
+    if (!this.user) throw new NotFoundError(NotFoundError.code.ENTITY_NOT_FOUND, { message: 'User not found'});
     yield next;
   }
 
@@ -62,7 +57,7 @@ export default class UserController {
     try {
       result = yield newUser.save();
     } catch (err) {
-      this.throw( JSON.stringify(ErrorHandler.extractMongoErrors(err)), 500);
+      throw new MongoError(err);
     }
 
     this.status = 201;
@@ -77,7 +72,7 @@ export default class UserController {
     try {
       result = yield this.user.save();
     } catch (err) {
-      this.throw( JSON.stringify(ErrorHandler.extractMongoErrors(err)), 500);
+      throw new MongoError(err);
     }
     this.body = result
   }
@@ -87,8 +82,9 @@ export default class UserController {
     try {
       result = yield this.user.remove();
     } catch (err) {
-      this.throw( JSON.stringify(ErrorHandler.extractMongoErrors(err)), 500);
+      throw new MongoError(err);
     }
+    //this.status = 204;
     this.body = result
   }
 

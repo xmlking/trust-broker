@@ -20,7 +20,7 @@ Multi Identity Provider / Broker - take username/password, APIKey, Facebook or G
 # install MongoDB
 brew install mongodb
 
-# install Node
+# install Node (tested with iojs v3.1.0)
 brew install node
 
 # install Babel
