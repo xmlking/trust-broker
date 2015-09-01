@@ -5,7 +5,7 @@ Multi Identity Provider / Broker - take username/password, APIKey, Facebook or G
 
 ### Features 
 
-1. Support plugable authenticate strategies ranging from 
+1. Support pluggable authenticate strategies ranging from 
   1. verifying a username and password with DB or LDAP
   2. delegated authentication using OAuth or 
   3. federated authentication using OpenID Connect.
