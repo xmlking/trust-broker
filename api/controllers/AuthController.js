@@ -30,7 +30,6 @@ export default class AuthController {
         if (err) throw err;
         //NOTE: user was a generator.
         user = yield user;
-        ctx.user = user; //FIXME: without this line, `user` is not set to `this` context
         yield ctx.login(user,{session: false})
       }
     ).call(this, next);
@@ -49,7 +48,6 @@ export default class AuthController {
     yield passport.authenticate('facebook',{session: false}, function*(err, user, info) {
       if (err) throw err;
       user = yield user;
-      ctx.user = user; //FIXME: without this line, `user` is not set to `this` context
       yield ctx.login(user,{session: false})
     }).call(this, next);
 
@@ -67,7 +65,6 @@ export default class AuthController {
     yield passport.authenticate('google-openidconnect',{session: false}, function*(err, user, info) {
       if (err) throw err;
       user = yield user;
-      ctx.user = user; //FIXME: without this line, `user` is not set to `this` context
       yield ctx.login(user,{session: false})
     }).call(this, next);
 
@@ -75,11 +72,12 @@ export default class AuthController {
   }
 
   static *signToken(next) {
-    console.log('in signToken isAuthenticated, user',this.isAuthenticated() , this.user);
+    console.log('in signToken isAuthenticated, user:',this.isAuthenticated() , this.req.user );
+
     let token = jwt.sign( {
-        name: this.user.name,
-        sub: this.user.email,
-        roles: this.user.roles
+        name: this.req.user.name,
+        sub: this.req.user.email,
+        roles: this.req.user.roles
       },
       config.get('jwt.privateKey'),
       config.get('jwt.options')
@@ -104,6 +102,7 @@ export default class AuthController {
   }
 
   static *forgotPassword(next) {
+    // send email with reset url(url with JWT)
     throw new NotImplementedError(0, { message: 'forgot password not implemented yet'});
     //this.body = this.user;
   }

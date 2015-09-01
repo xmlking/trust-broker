@@ -160,11 +160,13 @@ export default class User {
   }
 
   static *byEmail(email) {
-    return yield this.findOne({email}).exec();
+    let provider = 'local';
+    return yield this.findOne({email, provider}).exec();
   }
 
   static *byUsername(username) {
-    return yield this.findOne({username}).exec();
+    let provider = 'local';
+    return yield this.findOne({username, provider}).exec();
   }
 
   *comparePassword(candidatePassword) {
