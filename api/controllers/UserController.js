@@ -4,7 +4,7 @@ import {route, HttpMethod} from 'koa-router-decorators';
 
 import Util from '../utils/Util'
 import User from '../models/User'
-import AuthZ from '../middleware/AuthZ'
+import {isAdmin, hasAllRoles, hasAnyRoles, hasAnyScopes, isAdminOrSelf} from '../middleware/Authorization'
 import {NotFoundError, AuthorizationError, MongoError} from "../utils/errors"
 import config from 'config';
 
@@ -20,25 +20,25 @@ export default class UserController {
 
     this.router.use(
       // add middleware
-      jwt({secret, audience, issuer}),
-      AuthZ.isAdmin
+      jwt({secret, audience, issuer})
+      //, isAdmin
     );
 
     this.router
-      .get('/:id', UserController.findById, UserController.get)
-      .put('/:id', UserController.findById, UserController.update)
-      .delete('/:id', UserController.findById, UserController.delete);
+      .get('/:id', UserController.findById, isAdminOrSelf, UserController.get)
+      .put('/:id', UserController.findById, isAdminOrSelf, UserController.update)
+      .delete('/:id', isAdmin, UserController.findById, UserController.delete);
 
     return this.router.routes();
   }
 
   static *findById(next) {
-    this.user = yield User.findById(this.params.id);
-    if (!this.user) throw new NotFoundError(NotFoundError.code.ENTITY_NOT_FOUND, { message: 'User not found'});
+    this.state.dbuser = yield User.findById(this.params.id);
+    if (!this.state.dbuser) throw new NotFoundError(NotFoundError.code.ENTITY_NOT_FOUND, { message: 'User not found'});
     yield next;
   }
 
-  @route('/', HttpMethod.GET)
+  @route('/', HttpMethod.GET, hasAnyRoles(['admin','superadmin']))
   static *index(next) {
     let query = User.find().skip(0).limit(20);
     let users = yield query.exec();
@@ -46,8 +46,9 @@ export default class UserController {
     this.body = {users, count};
   }
 
+  //@route('/:id', HttpMethod.GET, UserController.findById, isAdminOrSelf)
   static *get() {
-    this.body = this.user;
+    this.body = this.state.dbuser;
   }
 
   @route('/', HttpMethod.POST)
@@ -66,11 +67,11 @@ export default class UserController {
 
   static *update(next) {
     for (let [key,value] of Util.objectEntries(this.request.body)) {
-      this.user.set(key, value);
+      this.state.dbuser.set(key, value);
     }
     let result;
     try {
-      result = yield this.user.save();
+      result = yield this.state.dbuser.save();
     } catch (err) {
       throw new MongoError(err);
     }
@@ -80,7 +81,7 @@ export default class UserController {
   static *delete(next) {
     let result;
     try {
-      result = yield this.user.remove();
+      result = yield this.state.dbuser.remove();
     } catch (err) {
       throw new MongoError(err);
     }
@@ -89,4 +90,3 @@ export default class UserController {
   }
 
 }
-

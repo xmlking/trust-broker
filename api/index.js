@@ -25,7 +25,7 @@ export default class AuthServer {
     });
 
     mongoose.connect(uri, options);
-    // Comment like below to disable seed data
+    // comment this line to disable seed data
     require('./utils/seed');
 
     this.server = koa();
@@ -39,7 +39,8 @@ export default class AuthServer {
     this.server
       .use(this.rootRouter.routes())
       .use(this.rootRouter.allowedMethods());
-    // console.log(this.rootRouter); // debug routes
+    // uncomment this line to debug routes or use `DEBUG=koa-router npm start`
+    // console.log(this.rootRouter.stack);
     https.createServer(config.get('server.ssl.options'), this.server.callback()).listen(config.get('server.options'),
       () => {
         console.info(`Server started on https://${config.get('server.options.host')}:${config.get('server.options.port')}`);

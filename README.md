@@ -13,7 +13,11 @@ Multi Identity Provider / Broker - take username/password, APIKey, Facebook or G
   1. user's account will be "locked" after some number of consecutive failed login attempts.
   2. user's account will become unlocked once a sufficient amount of time has passed.
   3. system will expose the reason for a failed login attempt to the application.
-  
+3. Authorization middleware - support annotations driven access control.
+  1. Role based access control - `isAdmin`, `hasAnyRoles`, `hasAllRoles`
+  2. Scope based access control - `hasAnyScopes`, `hasAllScopes`
+  2. Resource owner access control (ACL) - `isAdminOrSelf`
+
 ### Prerequisite 
 
 ```bash
@@ -56,6 +60,8 @@ openssl x509 -req -days 365 -in .ssh/csr.pem -signkey .ssh/server.pem -out .ssh/
     NODE_ENV=DEV npm start
     # to run with prod env settings
     NODE_ENV=PROD npm start
+    # to debug routes
+    DEBUG=koa-router npm start
     ```
     
 ### Test
