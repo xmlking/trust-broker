@@ -5,19 +5,20 @@ Multi Identity Provider / Broker - take username/password, APIKey, Facebook or G
 
 ### Features 
 
-1. Support pluggable authenticate strategies ranging from 
+1. Provide `granular security` and `multitenancy` for your SaaS APIs.
+2. Support pluggable authenticate strategies ranging from 
   1. verifying a username and password with DB or LDAP
   2. delegated authentication using OAuth or 
   3. federated authentication using OpenID Connect.
-2. Account locking 
+3. Account locking 
   1. user's account will be "locked" after some number of consecutive failed login attempts.
   2. user's account will become unlocked once a sufficient amount of time has passed.
   3. system will expose the reason for a failed login attempt to the application.
-3. Authorization middleware - support annotations driven access control.
+4. Authorization middleware - support annotations driven access control.
   1. Role based access control - `isAdmin`, `hasAnyRoles`, `hasAllRoles`
   2. Scope based access control - `hasAnyScopes`, `hasAllScopes`
   2. Resource owner access control (ACL) - `isAdminOrSelf`
-
+  
 ### Prerequisite 
 
 ```bash
