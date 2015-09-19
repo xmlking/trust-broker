@@ -25,7 +25,7 @@ Multi Identity Provider / Broker - take username/password, APIKey, Facebook or G
 # install MongoDB
 brew install mongodb
 
-# install Node (tested with iojs v3.1.0)
+# install Node (tested with node v4.1.0)
 brew install node
 
 # install Babel
@@ -109,3 +109,6 @@ passport:
 Use Chrome [Postman](https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop) for REST API testing.
 
 Since you are using self-signed SSL Certs, first try to access URL in chrome and accept the cert, before trying in Postman.  
+
+### Known Issues 
+* Manually fix `'/(.*)' --> '(.*)'` koa-router code as described [here](https://github.com/alexmingoia/koa-router/issues/167)

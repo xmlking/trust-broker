@@ -29,6 +29,7 @@ export default class AuthServer {
     require('./utils/seed');
 
     this.server = koa();
+    this.server.experimental = true; // to support async / await
     this.server.use(ErrorHandler.catchAll);
     this.server.use(passport.initialize());
     this.server.use(bodyParser());

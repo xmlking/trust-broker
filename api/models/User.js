@@ -73,7 +73,7 @@ export default class User {
   hashPassword(next) {
     // Only hash the password if it has been modified (or is new)
     if (this.password && (this.isModified('password') || this.isNew)) {
-      (async () =>{
+      (async () => {
         try {
           this.password = await Bcrypt.hash(this.password, SALT_WORK_FACTOR);
           next();

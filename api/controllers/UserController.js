@@ -46,6 +46,7 @@ export default class UserController {
     this.body = {users, count};
   }
 
+  // FIXME: UserController.findById === undefined ???
   //@route('/:id', HttpMethod.GET, UserController.findById, isAdminOrSelf)
   static *get() {
     this.body = this.state.dbuser;
